@@ -31,14 +31,29 @@ migrate = Migrate(app, db)
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
-# {
-#     "venue_id": 1,
-#     "venue_name": "The Musical Hop",
-#     "artist_id": 4,
-#     "artist_name": "Guns N Petals",
-#     "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-#     "start_time": "2019-05-21T21:30:00.000Z"
-#   }
+  # data1={
+  #   "id": 1,
+  #   "name": "The Musical Hop",
+  #   "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
+  #   "address": "1015 Folsom Street",
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "phone": "123-123-1234",
+  #   "website": "https://www.themusicalhop.com",
+  #   "facebook_link": "https://www.facebook.com/TheMusicalHop",
+  #   "seeking_talent": True,
+  #   "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
+  #   "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
+  #   "past_shows": [{
+  #     "artist_id": 4,
+  #     "artist_name": "Guns N Petals",
+  #     "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
+  #     "start_time": "2019-05-21T21:30:00.000Z"
+  #   }],
+  #   "upcoming_shows": [],
+  #   "past_shows_count": 1,
+  #   "upcoming_shows_count": 0,
+  # }
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
@@ -50,9 +65,37 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(120), nullable=False, server_default='')
+    seeking_talent = db.Column(db.Boolean, nullable=False, server_default='true')
+    seeking_description = db.Column(db.String, nullable=False, server_default='')
+    past_shows = db.Column(db.String, nullable=False, server_default='')
+    upcoming_shows = db.Column(db.String, nullable=False, server_default='')
+    past_shows_count = db.Column(db.Integer, nullable=False, server_default='0')
+    upcoming_shows_count = db.Column(db.Integer, nullable=False, server_default='0')
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
+  # data1={
+  #   "id": 4,
+  #   "name": "Guns N Petals",
+  #   "genres": ["Rock n Roll"],
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "phone": "326-123-5000",
+  #   "website": "https://www.gunsnpetalsband.com",
+  #   "facebook_link": "https://www.facebook.com/GunsNPetals",
+  #   "seeking_venue": True,
+  #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+  #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
+  #   "past_shows": [{
+  #     "venue_id": 1,
+  #     "venue_name": "The Musical Hop",
+  #     "venue_image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
+  #     "start_time": "2019-05-21T21:30:00.000Z"
+  #   }],
+  #   "upcoming_shows": [],
+  #   "past_shows_count": 1,
+  #   "upcoming_shows_count": 0,
+  # }
 class Artist(db.Model):
     __tablename__ = 'Artist'
 
@@ -64,6 +107,13 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(120), nullable=False, server_default='')
+    seeking_venue = db.Column(db.Boolean, nullable=False, server_default='true')
+    seeking_description = db.Column(db.String, nullable=False, server_default='')
+    past_shows = db.Column(db.String, nullable=False, server_default='')
+    upcoming_shows = db.Column(db.String, nullable=False, server_default='')
+    past_shows_count = db.Column(db.Integer, nullable=False, server_default='0')
+    upcoming_shows_count = db.Column(db.Integer, nullable=False, server_default='0')
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -80,7 +130,7 @@ class Show(db.Model):
     artist_image_link = db.Column(db.String(500))
     start_time = db.Column(db.String)
 
-db.create_all()
+# db.create_all()
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -244,8 +294,7 @@ def show_venue(venue_id):
   # }
 
   data = Venue.query.filter_by(id=venue_id).all()
-  print(data[0].name)
-
+  print(data[0])
   # data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
   return render_template('pages/show_venue.html', venue=data[0])
 
@@ -443,7 +492,7 @@ def edit_artist(artist_id):
   #   "phone": "326-123-5000",
   #   "website": "https://www.gunsnpetalsband.com",
   #   "facebook_link": "https://www.facebook.com/GunsNPetals",
-  #   "seekin+g_venue": True,
+  #   "seeking_venue": True,
   #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
   #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
   # }
@@ -458,19 +507,40 @@ def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
 
-  artist = Artist.query.get(artist_id)
-  updated_artist = request.form
-  print(updated_artist)
+  error = False
+  try:
+      artist = Artist.query.get(artist_id)
+      updated_artist = request.form
+      print(updated_artist)
 
-  artist.name = updated_artist['name']
-  artist.city = updated_artist['city']
-  artist.state = updated_artist['state']
-  artist.phone = updated_artist['phone']
-  artist.genres = updated_artist['genres']
-  artist.facebook_link = updated_artist['facebook_link']
-  artist.image_link = updated_artist['image_link']
-
-  print(artist.genres)
+      artist.name = updated_artist['name']
+      artist.city = updated_artist['city']
+      artist.state = updated_artist['state']
+      artist.phone = updated_artist['phone']
+      artist.genres = updated_artist['genres']
+      artist.facebook_link = updated_artist['facebook_link']
+      artist.image_link = updated_artist['image_link']
+      if(updated_artist.get('seeking_description')):
+        artist.seeking_description = updated_artist['seeking_description']
+      else:
+        artist.seeking_description = ''
+      if(updated_artist.get('seeking_venue') and updated_artist.get('seeking_venue')=='y'):
+          artist.seeking_venue = True
+      else:
+        artist.seeking_venue = False
+      if(updated_artist.get('website')):
+        artist.website = updated_artist['website']
+      else:
+        artist.website = ''
+      db.session.commit()
+  except:
+      error=True
+      db.session.rollback()
+      print(sys.exc_info())
+  finally:
+      db.session.close()
+  if error:
+      abort(400)
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -510,9 +580,22 @@ def edit_venue_submission(venue_id):
       venue.state = updated_venue['state']
       venue.address = updated_venue['address']
       venue.phone = updated_venue['phone']
-      venue.genres = updated_venue['genres']
       venue.facebook_link = updated_venue['facebook_link']
       venue.image_link = updated_venue['image_link']
+
+      if(updated_venue.get('seeking_description')):
+        venue.seeking_description = updated_venue['seeking_description']
+      else:
+        venue.seeking_description = ''
+      if(updated_venue.get('seeking_talent') and updated_venue.get('seeking_talent')=='y'):
+          venue.seeking_talent = True
+      else:
+        venue.seeking_talent = False
+      if(updated_venue.get('website')):
+        venue.website = updated_venue['website']
+      else:
+        venue.website = ''
+
       db.session.commit()
   except:
       error=True
